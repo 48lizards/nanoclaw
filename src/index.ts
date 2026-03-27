@@ -60,6 +60,8 @@ import {
 import { startSchedulerLoop } from './task-scheduler.js';
 import { Channel, NewMessage, RegisteredGroup } from './types.js';
 import { logger } from './logger.js';
+import { initBotPool } from './channels/telegram.js';
+import { TELEGRAM_BOT_POOL } from './config.js';
 
 // Re-export for backwards compatibility during refactor
 export { escapeXml, formatMessages } from './router.js';
@@ -595,6 +597,10 @@ async function main(): Promise<void> {
   if (channels.length === 0) {
     logger.fatal('No channels connected');
     process.exit(1);
+  }
+
+  if (TELEGRAM_BOT_POOL.length > 0) {
+    await initBotPool(TELEGRAM_BOT_POOL);
   }
 
   // Start subsystems (independently of connection handler)
